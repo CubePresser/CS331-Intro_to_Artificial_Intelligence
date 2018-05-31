@@ -15,28 +15,44 @@ def buildDictionary(fileName):
 def makePreProccessed(fileName, dictionary):
 	file = open(fileName, "r") #open our given file with read only permissions
 	values = [] #1s and 0s that mean if a dictionary word is in the sentences or not
+	len_dictionary = len(dictionary)
 	for line in file: #for every line in the file
+		line = stripPunctuation(line)
 		line = line.split(' \t') #split it into individual words
-		preStuff = [] #this is the sub array for each sentence
+		preStuff = [0]*len_dictionary #this is the sub array for each sentence 
 
-		#TODO: this is not going to work because the dictionary is way to long compared to the sentences
-		#need to find a way to get which location the word is in the dictionary and set that index to 1
-		for x in range(len(dictionary)): #for each word in the dictionary
-			if line[x] == dictionary[x]: #check to see if they're the same
-				preStuff.append(1) # if they are put a 1
-			else:
-				preStuff.append(0) #otherwise put a 0
-
-
+		for x in range(len_dictionary): #for each word in the dictionary
+			for y in line: 
+				if y == dictionary[x]: #check to see if they're the same
+					preStuff[x] = 1 # if they replace the 0 with a 1 
+		preStuff[len_dictionary - 1] = line[-1] #put the class label as the last spot
+		values.append(preStuff)
 	return values
 
 
 def stripPunctuation(sentence):
-	sentence = sentence.translate(None, string.punctuation)
+	translator = str.maketrans('', '', string.punctuation)
+	sentence = sentence.translate(translator)
 	return sentence
+
+def generateFiles(testData, trainingData):
+	f1 = open("preprocessed_test.txt", "w+")
+	f2 = open("preprocessed_train.txt", "w+")
+
+	for line in testData:
+		f1.write(str(line))
+
+	for line in trainingData:
+		f2.write(str(line))
+
+	f1.close()
+	f2.close()
 
 if __name__ == "__main__": #treat this as a main function and keep at bottom of file
 	fileName = argv[1] #first arguement after script name should be what file is wanted
 	dictionary = buildDictionary(fileName)
+	dictionary.append('classLabel')
 	values = makePreProccessed(fileName, dictionary)
-	print(dictionary)
+	#print(values[1])
+	generateFiles(values, values)
+	#print(dictionary)
