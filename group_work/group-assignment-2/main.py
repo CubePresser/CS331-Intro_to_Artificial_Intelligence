@@ -18,15 +18,15 @@ def makePreProccessed(fileName, dictionary):
 	len_dictionary = len(dictionary)
 	for line in file: #for every line in the file
 		line = stripPunctuation(line)
-		line = line.split(' \t') #split it into individual words
+		line = line.strip()
+		line = line.split() #split it into individual words
 		preStuff = [0]*len_dictionary #this is the sub array for each sentence 
-
+		preStuff[len_dictionary - 1] = int(line[-1].strip()) #put the class label as the last spot
 		for x in range(len_dictionary): #for each word in the dictionary
 			for y in line: 
 				if y == dictionary[x]: #check to see if they're the same
 					preStuff[x] = 1 # if they replace the 0 with a 1 
-		preStuff[len_dictionary - 1] = line[-1] #put the class label as the last spot
-		values.append(preStuff)
+		values.append(preStuff) #add this sentence information to the total array
 	return values
 
 
@@ -36,15 +36,18 @@ def stripPunctuation(sentence):
 	return sentence
 
 def generateFiles(testData, trainingData):
+	#Open preprocess files for writing into
 	f1 = open("preprocessed_test.txt", "w+")
 	f2 = open("preprocessed_train.txt", "w+")
 
+	#For each line in the test and training data, write into the appropriate file, stripping any brackets and adding a newline
 	for line in testData:
-		f1.write(str(line))
+		f1.write(str(line)[1:-1]+"\n")
 
 	for line in trainingData:
-		f2.write(str(line))
+		f2.write(str(line)[1:-1]+"\n")
 
+	#Close the files
 	f1.close()
 	f2.close()
 
@@ -53,6 +56,6 @@ if __name__ == "__main__": #treat this as a main function and keep at bottom of 
 	dictionary = buildDictionary(fileName)
 	dictionary.append('classLabel')
 	values = makePreProccessed(fileName, dictionary)
-	#print(values[1])
+	values.insert(0, dictionary)
 	generateFiles(values, values)
 	#print(dictionary)
