@@ -1,0 +1,8 @@
+Trained from trainingSet.txt
+and ran on trainingSet.txt
+ACCURACY: 100.0%
+
+Trained from trainingSet.txt
+and ran on testSet.txt
+ACCURACY: 77.66599597585513%
+
